@@ -1,10 +1,9 @@
-from django.shortcuts import render, HttpResponse
-from .models import TodoItem
+from django.http import JsonResponse
+from .tasks import fetch_stock_data
 
-# Create your views here.
-def home(request):
-  return render(request, 'home.html')
-
-def todos(request):
-  items = TodoItem.objects.all()
-  return render(request, 'todos.html', {'todos': items})
+def fetch_data_view(request, symbol):
+    try:
+        fetch_stock_data(symbol)
+        return JsonResponse({"status": "success", "message": f"Data for {symbol} fetched successfully."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
