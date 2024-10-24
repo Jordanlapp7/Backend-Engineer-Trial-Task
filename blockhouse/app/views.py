@@ -1,5 +1,6 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from .models import StockData, PredictedStockPrice
+from .reports import calculate_backtest_metrics, generate_stock_price_plot, generate_pdf_report
 from .ml import load_pretrained_model, predict_stock_prices
 from .tasks import fetch_stock_data
 from .backtest import generate_performance_summary
@@ -54,4 +55,39 @@ def predict_stock_prices_api(request, symbol):
     return JsonResponse({
         'status': 'success',
         'predictions': predictions.to_dict(orient='records')
+    })
+
+# Django view for generating the report
+def generate_report(request, symbol):
+    # Fetch actual and predicted data for the stock
+    actual_data = StockData.objects.filter(symbol=symbol).order_by('timestamp')
+    predicted_data = PredictedStockPrice.objects.filter(symbol=symbol).order_by('date')
+    
+    # Convert to DataFrame
+    actual_df = pd.DataFrame(list(actual_data.values('timestamp', 'close_price')))
+    predicted_df = pd.DataFrame(list(predicted_data.values('date', 'predicted_price')))
+    
+    # Calculate metrics (replace with actual backtest data if necessary)
+    metrics = calculate_backtest_metrics({
+        'final_portfolio_value': 15000,  # Example value, replace with actual data
+        'initial_investment': 10000,
+        'max_drawdown': 10,
+        'trades_executed': 5
+    })
+    
+    # Generate the plot
+    plot_filename = generate_stock_price_plot(actual_df, predicted_df)
+    
+    # Generate the PDF report
+    pdf_filename = generate_pdf_report(metrics, plot_filename)
+    
+    # If the user wants a PDF report, return it
+    if request.GET.get('format') == 'pdf':
+        return FileResponse(open(pdf_filename, 'rb'), content_type='application/pdf')
+    
+    # Otherwise, return the report as JSON
+    return JsonResponse({
+        'status': 'success',
+        'metrics': metrics,
+        'predicted_prices': predicted_df.to_dict(orient='records')
     })
