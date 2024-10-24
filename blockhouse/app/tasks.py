@@ -1,10 +1,14 @@
 import requests
+import os
+from dotenv import load_dotenv
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 from .models import StockData
 import time
 
-ALPHA_VANTAGE_API_KEY = 'your_api_key_here'
+load_dotenv()
+
+ALPHA_VANTAGE_API_KEY = os.getenv('ALPHAVANTAGE_API_KEY')
 BASE_URL = 'https://www.alphavantage.co/query'
 RETRY_DELAY = 60  # Wait 60 seconds before retrying after hitting rate limit
 MAX_RETRIES = 3  # Maximum retries for network issues

@@ -1,0 +1,91 @@
+Django Stock Prediction App
+This is a Django-based web application for stock price prediction, which integrates with the Alpha Vantage API to fetch historical stock data. The app allows backtesting strategies, generates performance reports, and provides visualizations of predicted vs. actual stock prices.
+
+Features
+Fetch stock price data using the Alpha Vantage API.
+Backtesting module for testing simple trading strategies.
+Machine learning integration to predict future stock prices.
+Generate performance reports with visualizations (PDF and JSON formats).
+Integration with PostgreSQL for database storage.
+
+Requirements
+Python 3.12+ (for running the Django project)
+Alpha Vantage API key (for fetching stock data)
+PostgreSQL (local or cloud-based for database storage)
+
+Installation and Setup
+1. Download the Project
+First, download the project to your local machine. You can either clone the project using Git (if applicable) or download it directly as a ZIP file and extract it.
+
+2. Install Python Dependencies
+Install the necessary Python dependencies from the requirements.txt file: 
+pip install -r requirements.txt
+
+3. Install PostgreSQL
+If you haven't already, install PostgreSQL. You can find installation instructions for your operating system here. After installing PostgreSQL, make sure you create a new PostgreSQL database and note the connection details.
+
+4. Create and Configure Your .env File
+Create a .env file in the root of the project by copying the provided .env.example template:
+cp .env.example .env
+Update the .env file with your Alpha Vantage API key and your PostgreSQL connection details:
+
+# Alpha Vantage API key
+ALPHAVANTAGE_API_KEY=your_alpha_vantage_api_key
+
+# PostgreSQL Database settings
+POSTGRES_DB=my_database
+POSTGRES_USER=my_user
+POSTGRES_PASSWORD=my_password
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+
+# Django secret key
+DJANGO_SECRET_KEY=your_django_secret_key
+
+Running the App Locally
+1. Run Migrations
+Apply the database migrations to set up your PostgreSQL database schema:
+python manage.py migrate
+
+2. Create a Superuser (for Django Admin)
+Create a superuser to access the Django admin panel:
+python manage.py createsuperuser
+
+3. Collect Static Files
+If needed, collect static files for Django:
+python manage.py collectstatic
+
+4. Run the Django Development Server
+Start the development server:
+python manage.py runserver
+
+5. Access the App
+Open your browser and navigate to http://localhost:8000 to access the app.
+
+Accessible URLs
+Once the app is running, you can access the following URLs:
+
+Fetch Stock Data:
+Fetch daily stock price data for a specific stock symbol (e.g., AAPL):
+GET /fetch/<symbol>/
+Example: http://127.0.0.1:8000/fetch/AAPL/
+
+Backtesting Module:
+Test simple trading strategies with parameters (buy/sell based on moving averages).
+POST /backtest/
+Example: http://127.0.0.1:8000/backtest/AAPL/10000/
+
+Predict Stock Prices:
+Predict stock prices for the next 30 days using a machine learning model:
+GET /predict/<symbol>/
+Example: http://127.0.0.1:8000/predict/AAPL/
+
+Generate Performance Report:
+Generate a performance report (with visualizations) comparing predicted vs. actual stock prices:
+GET /report/<symbol>/?format=json   # JSON format
+GET /report/<symbol>/?format=pdf    # PDF format
+Example: http://127.0.0.1:8000/report/AAPL/?format=pdf
+
+Django Admin:
+Manage your data and users through Django’s admin panel:
+http://127.0.0.1:8000/admin/
