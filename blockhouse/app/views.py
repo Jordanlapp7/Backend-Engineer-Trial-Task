@@ -27,13 +27,20 @@ def predict_stock_prices_api(request, symbol):
     # Fetch historical stock data for the symbol
     stock_data = StockData.objects.filter(symbol=symbol).order_by('timestamp')
 
-    # Convert to DataFrame for prediction
+    # Convert to a Pandas DataFrame for prediction
     data = pd.DataFrame(list(stock_data.values('timestamp', 'close_price')))
     data['timestamp'] = pd.to_datetime(data['timestamp'])
     data.set_index('timestamp', inplace=True)
 
+    # Ensure there is enough historical data for prediction
+    if len(data) < 50:
+        return JsonResponse({'status': 'error', 'message': 'Not enough historical data to make predictions.'}, status=400)
+
     # Predict stock prices for the next 30 days
-    predictions = predict_stock_prices(model, data)
+    try:
+        predictions = predict_stock_prices(model, data)
+    except ValueError as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     # Store predictions in the database
     for _, row in predictions.iterrows():
