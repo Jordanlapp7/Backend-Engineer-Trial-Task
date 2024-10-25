@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\jorda\OneDrive\Desktop\Projects\Blockhouse Backend Engineer Trial Task\blockhouse\env
+set VIRTUAL_ENV=C:\Users\jorda\OneDrive\Desktop\Projects\Jordan Lapp Blockhouse Backend Engineer Trial Task\blockhouse\env
 
 if not defined PROMPT set PROMPT=$P$G
 
